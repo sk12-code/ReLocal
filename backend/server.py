@@ -1020,6 +1020,199 @@ async def create_category(name: str, description: Optional[str] = None, request:
     
     return Category(**category_doc)
 
+# ============= SHIPPING & LOGISTICS ENDPOINTS =============
+
+@api_router.post("/shipping/estimate")
+async def estimate_shipping_cost(estimate_req: ShippingEstimateRequest, request: Request, authorization: Optional[str] = Header(None)):
+    """
+    Estimate shipping cost for an order
+    Used at checkout to show estimated delivery cost
+    """
+    user = await get_current_user(request, authorization)
+    
+    try:
+        # Get shipping estimate
+        estimate = await shipping_estimator.estimate_shipping(
+            from_address=estimate_req.from_address,
+            to_address=estimate_req.to_address,
+            weight_kg=estimate_req.weight_kg,
+            order_id=estimate_req.order_id
+        )
+        
+        # Save estimate to database
+        estimate_id = f"est_{uuid.uuid4().hex[:12]}"
+        estimate_doc = {
+            "estimate_id": estimate_id,
+            "order_id": estimate_req.order_id,
+            "from_address": estimate_req.from_address,
+            "to_address": estimate_req.to_address,
+            "weight_kg": estimate_req.weight_kg,
+            "estimated_cost": estimate['estimated_cost'],
+            "currency": estimate['currency'],
+            "service_level": estimate['service_level'],
+            "delivery_days_min": estimate['delivery_days_min'],
+            "delivery_days_max": estimate['delivery_days_max'],
+            "is_international": estimate['is_international'],
+            "is_remote_area": estimate['is_remote_area'],
+            "estimation_method": estimate['estimation_method'],
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.shipment_estimates.insert_one(estimate_doc)
+        
+        return {
+            "estimate_id": estimate_id,
+            **estimate
+        }
+    
+    except Exception as e:
+        logger.error(f"Shipping estimation error: {e}")
+        # Never block checkout - return fallback estimate
+        return {
+            "estimate_id": "fallback",
+            "estimated_cost": 10.0,
+            "currency": "USD",
+            "service_level": "standard",
+            "delivery_days_min": 5,
+            "delivery_days_max": 10,
+            "is_international": False,
+            "is_remote_area": False,
+            "estimation_method": "fallback",
+            "note": "Estimated cost - final cost may vary"
+        }
+
+@api_router.post("/shipping/create")
+async def create_shipment(ship_req: ShipmentCreateRequest, request: Request, authorization: Optional[str] = Header(None)):
+    """
+    Create shipment and generate shipping label
+    Called after payment is complete
+    """
+    user = await get_current_user(request, authorization)
+    
+    # Get order
+    order_doc = await db.orders.find_one({"order_id": ship_req.order_id}, {"_id": 0})
+    if not order_doc:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Verify user owns the order (for sellers) or is admin
+    if user.role == "shopkeeper":
+        shop_doc = await db.shops.find_one({"owner_id": user.user_id}, {"_id": 0})
+        if not shop_doc or shop_doc["shop_id"] != order_doc["shop_id"]:
+            raise HTTPException(status_code=403, detail="Not authorized")
+    elif user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    # Get shop address
+    shop_doc = await db.shops.find_one({"shop_id": order_doc["shop_id"]}, {"_id": 0})
+    if not shop_doc:
+        raise HTTPException(status_code=404, detail="Shop not found")
+    
+    from_address = {
+        "name": shop_doc["name"],
+        "street": shop_doc["location"].get("street", ""),
+        "city": shop_doc["location"].get("city", ""),
+        "state": shop_doc["location"].get("state", ""),
+        "postal_code": shop_doc["location"].get("postal_code", ""),
+        "country": shop_doc["location"].get("country", "IN"),
+        "phone": shop_doc.get("phone", ""),
+        "email": shop_doc.get("email", "")
+    }
+    
+    to_address = order_doc.get("delivery_address", {})
+    to_address["name"] = order_doc.get("buyer_name", "Customer")
+    to_address["country"] = to_address.get("country", "IN")
+    
+    weight_kg = order_doc.get("total_weight_kg", 1.0)
+    
+    # Create shipment
+    try:
+        shipment = await shipment_service.create_shipment(
+            order_id=ship_req.order_id,
+            from_address=from_address,
+            to_address=to_address,
+            weight_kg=weight_kg,
+            customs_info=ship_req.customs_declaration
+        )
+        
+        # Update order with shipment info
+        await db.orders.update_one(
+            {"order_id": ship_req.order_id},
+            {"$set": {
+                "shipment_id": shipment["shipment_id"],
+                "tracking_id": shipment.get("tracking_number"),
+                "status": "shipped" if shipment.get("tracking_number") else "confirmed"
+            }}
+        )
+        
+        return shipment
+    
+    except Exception as e:
+        logger.error(f"Shipment creation error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to create shipment: {str(e)}")
+
+@api_router.get("/shipping/shipment/{shipment_id}")
+async def get_shipment(shipment_id: str, request: Request, authorization: Optional[str] = Header(None)):
+    """
+    Get shipment details
+    """
+    user = await get_current_user(request, authorization)
+    
+    shipment = await db.shipments.find_one({"shipment_id": shipment_id}, {"_id": 0})
+    if not shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    
+    # Get tracking events
+    tracking_events = await db.tracking_events.find(
+        {"shipment_id": shipment_id},
+        {"_id": 0}
+    ).sort("occurred_at", -1).to_list(100)
+    
+    return {
+        **shipment,
+        "tracking_events": tracking_events
+    }
+
+@api_router.get("/shipping/order/{order_id}")
+async def get_order_shipment(order_id: str, request: Request, authorization: Optional[str] = Header(None)):
+    """
+    Get shipment for an order
+    """
+    user = await get_current_user(request, authorization)
+    
+    shipment = await db.shipments.find_one({"order_id": order_id}, {"_id": 0})
+    if not shipment:
+        return {"message": "No shipment created yet"}
+    
+    # Get tracking events
+    tracking_events = await db.tracking_events.find(
+        {"shipment_id": shipment["shipment_id"]},
+        {"_id": 0}
+    ).sort("occurred_at", -1).to_list(100)
+    
+    return {
+        **shipment,
+        "tracking_events": tracking_events
+    }
+
+@api_router.post("/shipping/webhook/tracking")
+async def handle_tracking_webhook(request: Request):
+    """
+    Handle tracking updates from shipping providers
+    """
+    try:
+        data = await request.json()
+        
+        # Process tracking event
+        success = await tracking_service.process_tracking_event(data)
+        
+        if success:
+            return {"status": "success"}
+        else:
+            return {"status": "failed", "message": "Shipment not found"}
+    
+    except Exception as e:
+        logger.error(f"Tracking webhook error: {e}")
+        return {"status": "error", "message": str(e)}
+
 # ============= PAYMENT ENDPOINTS =============
 
 @api_router.post("/checkout/session")
