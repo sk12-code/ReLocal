@@ -103,10 +103,30 @@ export default function OrderHistory() {
                 <Card className="p-6" data-testid={`order-${index}`}>
                   <div className="flex flex-col md:flex-row justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-xl mb-1">{order.shop_name}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-semibold text-xl">{order.shop_name}</h3>
+                        {order.is_tourist_delivery && (
+                          <span className="px-3 py-1 bg-secondary/20 text-secondary rounded-full text-xs font-medium flex items-center gap-1">
+                            <Plane className="w-3 h-3" />
+                            Traveled Light ✈️
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-muted">
                         Order #{order.order_id} • {new Date(order.created_at).toLocaleDateString()}
                       </p>
+                      {order.total_weight_kg > 0 && (
+                        <p className="text-xs text-muted mt-1">
+                          <Package className="w-3 h-3 inline mr-1" />
+                          {order.total_weight_kg.toFixed(1)} kg saved from your luggage
+                        </p>
+                      )}
+                      {order.ship_after_trip && order.trip_end_date && (
+                        <p className="text-xs text-accent-foreground mt-1 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          Ships after: {new Date(order.trip_end_date).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
                     <div className="mt-4 md:mt-0">
                       <span className={`px-4 py-2 rounded-full text-sm font-medium ${
