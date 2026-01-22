@@ -857,7 +857,8 @@ async def generate_qr_code(product_id: str, request: Request, authorization: Opt
     
     qr_code_id = product_doc["qr_code_id"]
     # URL must point to /api/qr/scan/ endpoint which handles the redirect
-    qr_url = f"{str(request.base_url).rstrip('/')}api/qr/scan/{qr_code_id}"
+    base = str(request.base_url).rstrip('/')
+    qr_url = f"{base}/api/qr/scan/{qr_code_id}"
     
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(qr_url)
