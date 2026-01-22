@@ -413,7 +413,7 @@ async def logout(request: Request, response: Response):
     return {"message": "Logged out successfully"}
 
 @api_router.post("/auth/register")
-async def register(registration: LoginRequest, response: Response):
+async def register(registration: RegistrationRequest, response: Response):
     # Check if user already exists
     existing_user = await db.users.find_one({"email": registration.email}, {"_id": 0})
     if existing_user:
@@ -422,12 +422,13 @@ async def register(registration: LoginRequest, response: Response):
     # Hash password
     password_hash = bcrypt.hashpw(registration.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     
-    # Create user
+    # Create user - use full_name if provided, otherwise derive from email
     user_id = f"user_{uuid.uuid4().hex[:12]}"
+    user_name = registration.full_name if registration.full_name else registration.email.split('@')[0].title()
     user_doc = {
         "user_id": user_id,
         "email": registration.email,
-        "name": registration.email.split('@')[0].title(),
+        "name": user_name,
         "picture": None,
         "role": "tourist",
         "addresses": [],
