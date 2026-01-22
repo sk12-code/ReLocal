@@ -32,24 +32,24 @@ logger = logging.getLogger(__name__)
 # ============= MODELS =============
 
 class User(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     user_id: str
     email: str
     name: str
     picture: Optional[str] = None
-    role: str = \"tourist\"
+    role: str = "tourist"
     addresses: List[Dict[str, str]] = []
     created_at: datetime
 
 class UserSession(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     user_id: str
     session_token: str
     expires_at: datetime
     created_at: datetime
 
 class Shop(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     shop_id: str
     owner_id: str
     name: str
@@ -61,13 +61,13 @@ class Shop(BaseModel):
     created_at: datetime
 
 class Product(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     product_id: str
     shop_id: str
     name: str
     description: str
     price: float
-    currency: str = \"usd\"
+    currency: str = "usd"
     images: List[str] = []
     qr_code_id: str
     verified: bool = False
@@ -75,7 +75,7 @@ class Product(BaseModel):
     created_at: datetime
 
 class QRCode(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     qr_code_id: str
     product_id: str
     scans_count: int = 0
