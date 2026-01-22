@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowLeft, Package } from 'lucide-react';
+import { ArrowLeft, Package, Plane } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SellerOrders() {
