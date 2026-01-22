@@ -234,6 +234,36 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* Auth Modal for non-logged-in users */}
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Sign in to Continue</DialogTitle>
+            <DialogDescription>
+              Create an account or sign in to complete your purchase and track your order.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-muted/20 rounded-lg">
+              <p className="text-sm text-muted mb-2">You're purchasing:</p>
+              <p className="font-semibold">{product?.name}</p>
+              <p className="text-primary font-bold">${product?.price?.toFixed(2)} × {quantity}</p>
+            </div>
+            <Button 
+              data-testid="auth-modal-login-btn"
+              onClick={handleLoginRedirect}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full py-6"
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              Sign In / Create Account
+            </Button>
+            <p className="text-center text-xs text-muted">
+              Your cart will be saved and you'll return here after signing in
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
