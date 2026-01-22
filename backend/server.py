@@ -95,6 +95,7 @@ class OrderItem(BaseModel):
     product_name: str
     quantity: int
     price: float
+    weight_kg: float = 0.5  # Weight per item
 
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -111,6 +112,11 @@ class Order(BaseModel):
     tracking_id: Optional[str] = None
     gift_message: Optional[str] = None
     scheduled_delivery: Optional[datetime] = None
+    ship_after_trip: bool = False  # NEW: Ship after trip ends
+    trip_end_date: Optional[datetime] = None  # NEW: When trip ends
+    total_weight_kg: float = 0.0  # NEW: Total weight saved
+    delivery_preference_reason: Optional[str] = None  # NEW: Why delivery chosen
+    is_tourist_delivery: bool = False  # NEW: Mark as tourist delivery
     created_at: datetime
 
 class PaymentTransaction(BaseModel):
