@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API } from '@/App';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Plane, Package, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
