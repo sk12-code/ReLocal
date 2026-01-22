@@ -164,9 +164,9 @@ export default function ProductDetail() {
                     <Plane className="w-5 h-5 text-secondary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-base mb-1">Travel Light - We'll Deliver to Your Home</h3>
+                    <h3 className="font-semibold text-base mb-1">Travel Light - We&apos;ll Deliver to Your Home</h3>
                     <p className="text-sm text-muted mb-3">
-                      No need to carry this in your luggage. We'll ship it directly to your door.
+                      No need to carry this in your luggage. We&apos;ll ship it directly to your door.
                     </p>
                     <div className="flex flex-wrap gap-2 text-xs">
                       <span className="px-2 py-1 bg-background rounded-full flex items-center gap-1">
@@ -246,7 +246,7 @@ export default function ProductDetail() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="p-4 bg-muted/20 rounded-lg">
-              <p className="text-sm text-muted mb-2">You're purchasing:</p>
+              <p className="text-sm text-muted mb-2">You&apos;re purchasing:</p>
               <p className="font-semibold">{product?.name}</p>
               <p className="text-primary font-bold">${product?.price?.toFixed(2)} × {quantity}</p>
             </div>
@@ -259,7 +259,7 @@ export default function ProductDetail() {
               Sign In / Create Account
             </Button>
             <p className="text-center text-xs text-muted">
-              Your cart will be saved and you'll return here after signing in
+              Your cart will be saved and you&apos;ll return here after signing in
             </p>
           </div>
         </DialogContent>
