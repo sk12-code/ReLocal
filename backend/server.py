@@ -695,6 +695,9 @@ async def create_product(shop_id: str, product_data: ProductCreate, request: Req
         "qr_code_id": qr_code_id,
         "verified": False,
         "authenticity_badge": product_data.authenticity_badge,
+        "estimated_weight_kg": product_data.estimated_weight_kg,
+        "is_fragile": product_data.is_fragile,
+        "is_liquid": product_data.is_liquid,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.products.insert_one(product_doc)
