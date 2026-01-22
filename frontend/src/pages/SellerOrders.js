@@ -91,10 +91,23 @@ export default function SellerOrders() {
               <Card key={order.order_id} className="p-6" data-testid={`order-${index}`}>
                 <div className="flex flex-col md:flex-row justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-xl mb-1">Order #{order.order_id}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-semibold text-xl">Order #{order.order_id}</h3>
+                      {order.is_tourist_delivery && (
+                        <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium flex items-center gap-1">
+                          <Plane className="w-3 h-3" />
+                          Tourist Delivery
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-muted">
                       {new Date(order.created_at).toLocaleDateString()} • {order.delivery_type}
                     </p>
+                    {order.ship_after_trip && order.trip_end_date && (
+                      <p className="text-xs text-accent-foreground mt-1">
+                        📅 Ship after: {new Date(order.trip_end_date).toLocaleDateString()}
+                      </p>
+                    )}
                   </div>
                   <div className="mt-4 md:mt-0">
                     <span className={`px-4 py-2 rounded-full text-sm font-medium ${
