@@ -1,0 +1,185 @@
+{
+  "identity": {
+    "persona": "E1 - The Anti-AI Designer",
+    "mission": "Create a travel-first marketplace that feels like a handcrafted journal, not a SaaS tool.",
+    "principles": [
+      "Fusion over Imitation: Mix Editorial Print design with Modern App utility.",
+      "Emotion First: Every screen must evoke 'Discovery' or 'Nostalgia'.",
+      "Content is King: Products are stories, not just SKUs.",
+      "Texture over Gloss: Use grain and matte finishes, avoid shiny gradients."
+    ]
+  },
+  "typography": {
+    "fonts": {
+      "heading": {
+        "family": "Playfair Display, serif",
+        "weights": ["400", "600", "700"],
+        "usage": "All H1-H3 headings. Use 'italic' variants for emphasis words."
+      },
+      "body": {
+        "family": "DM Sans, sans-serif",
+        "weights": ["400", "500", "700"],
+        "usage": "Paragraphs, UI labels, buttons, data."
+      },
+      "accent": {
+        "family": "JetBrains Mono, monospace",
+        "weights": ["400"],
+        "usage": "Overlines, tags, technical details (e.g., Order IDs)."
+      }
+    },
+    "scale": {
+      "h1": "text-5xl md:text-7xl tracking-tight leading-[0.9]",
+      "h2": "text-3xl md:text-5xl tracking-tight leading-tight",
+      "h3": "text-2xl md:text-3xl font-medium",
+      "body_lg": "text-lg md:text-xl leading-relaxed",
+      "body_base": "text-base leading-relaxed",
+      "caption": "text-sm tracking-wide uppercase font-mono"
+    }
+  },
+  "colors": {
+    "theme": "light",
+    "palette": {
+      "primary": {
+        "DEFAULT": "#E07A5F",
+        "foreground": "#FFFFFF",
+        "description": "Terracotta - Warm, earthy, energetic. Use for primary actions."
+      },
+      "secondary": {
+        "DEFAULT": "#81B29A",
+        "foreground": "#FFFFFF",
+        "description": "Sage Green - Natural, calming. Use for success states and secondary badges."
+      },
+      "background": {
+        "DEFAULT": "#F9F8F6",
+        "paper": "#FFFFFF",
+        "description": "Warm Sand / Off-White. Avoid pure #FFFFFF for main background."
+      },
+      "foreground": {
+        "DEFAULT": "#2D3142",
+        "muted": "#5C5F6D",
+        "description": "Deep Charcoal. Softer than black."
+      },
+      "accent": {
+        "DEFAULT": "#F2CC8F",
+        "foreground": "#2D3142",
+        "description": "Soft Gold. Use for highlights and 'memories'."
+      },
+      "destructive": {
+        "DEFAULT": "#D62828",
+        "foreground": "#FFFFFF"
+      },
+      "border": "#E5E5E5"
+    },
+    "gradients": {
+      "hero_overlay": "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%)",
+      "subtle_warmth": "linear-gradient(135deg, #F9F8F6 0%, #F2CC8F 100%)"
+    }
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "px-6 md:px-12 lg:px-24",
+      "section_gap": "py-20 md:py-32",
+      "element_gap": "gap-6 md:gap-12"
+    },
+    "grids": {
+      "bento_marketing": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "dashboard_dense": "grid grid-cols-1 md:grid-cols-4 gap-4"
+    },
+    "border_radius": {
+      "default": "rounded-xl",
+      "card": "rounded-2xl",
+      "button": "rounded-full"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/20",
+      "secondary": "bg-white border-2 border-primary/20 text-primary hover:bg-primary/5 rounded-full px-8 py-6 text-lg font-medium",
+      "ghost": "hover:bg-foreground/5 text-foreground font-medium"
+    },
+    "cards": {
+      "product": "group relative overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50",
+      "memory": "aspect-[3/4] rounded-2xl overflow-hidden relative isolate",
+      "dashboard": "bg-white rounded-xl border border-border p-6 shadow-sm"
+    },
+    "inputs": {
+      "default": "h-12 rounded-lg border-border bg-white/50 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_artisan": {
+        "url": "https://images.unsplash.com/photo-1542166498816-dcf3df2db47e",
+        "alt": "Artisan potter shaping clay",
+        "usage": "Landing page hero background"
+      },
+      "qr_scan_context": {
+        "url": "https://images.pexels.com/photos/7289717/pexels-photo-7289717.jpeg",
+        "alt": "Tourist scanning QR code",
+        "usage": "Feature explanation section"
+      },
+      "market_vibes": {
+        "url": "https://images.unsplash.com/photo-1768321481665-b40705ab11ce",
+        "alt": "Colorful local market pottery",
+        "usage": "Marketplace discovery section"
+      },
+      "shop_owner": {
+        "url": "https://images.unsplash.com/photo-1744893497775-b95d39c83d45",
+        "alt": "Smiling shop owner",
+        "usage": "Seller onboarding/testimonials"
+      },
+      "crafts_display": {
+        "url": "https://images.unsplash.com/photo-1766933330352-81ff095ad04a",
+        "alt": "Handmade crafts sign",
+        "usage": "Category headers"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px, rounded joins"
+    }
+  },
+  "motion": {
+    "presets": {
+      "fade_up": {
+        "initial": { "opacity": 0, "y": 20 },
+        "whileInView": { "opacity": 1, "y": 0 },
+        "viewport": { "once": true },
+        "transition": { "duration": 0.6, "ease": "easeOut" }
+      },
+      "stagger_container": {
+        "hidden": { "opacity": 0 },
+        "show": {
+          "opacity": 1,
+          "transition": { "staggerChildren": 0.1 }
+        }
+      },
+      "hover_lift": {
+        "whileHover": { "y": -5, "transition": { "duration": 0.2 } }
+      }
+    },
+    "scroll": "Use 'lenis' for smooth scrolling momentum."
+  },
+  "tech_stack": {
+    "frontend": "React, Tailwind CSS, Framer Motion, Lucide React, Sonner (Toast), Shadcn/UI",
+    "backend": "FastAPI, MongoDB",
+    "libraries": [
+      "@radix-ui/react-*",
+      "framer-motion",
+      "lucide-react",
+      "clsx",
+      "tailwind-merge",
+      "sonner",
+      "lenis"
+    ]
+  },
+  "universal_guidelines": [
+    "Avoid 'AI Slop': No generic gradients, no centered text blocks without purpose.",
+    "Texture: Add a subtle noise overlay to the body background (opacity 0.03) to give a paper feel.",
+    "Spacing: Use 'p-8' or 'p-12' where you'd normally use 'p-4'. Luxury is space.",
+    "Micro-interactions: Buttons should scale on click. Cards should lift on hover.",
+    "Data-TestID: All interactive elements must have 'data-testid' attributes.",
+    "Dark Mode: While Light is primary, ensure Dark mode uses 'Zinc' grays (slate-900), not pure black."
+  ],
+  "instructions_to_main_agent": "1. Install 'lenis' and 'framer-motion' immediately. 2. Set up the font families in tailwind.config.js. 3. Create a 'Layout' component that handles the smooth scroll wrapper. 4. Build the 'Hero' section using the 'hero_artisan' image with a parallax effect."
+}
