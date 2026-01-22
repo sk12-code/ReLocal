@@ -66,7 +66,15 @@ export default function ShopProducts() {
 
       toast.success('Product added successfully!');
       setShowAddDialog(false);
-      setProductForm({ name: '', description: '', price: '', images: '' });
+      setProductForm({ 
+        name: '', 
+        description: '', 
+        price: '', 
+        images: '',
+        estimated_weight_kg: '0.5',
+        is_fragile: false,
+        is_liquid: false
+      });
       fetchData();
     } catch (error) {
       console.error('Error adding product:', error);
