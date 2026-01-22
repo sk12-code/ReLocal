@@ -90,16 +90,16 @@ class OrderItem(BaseModel):
     price: float
 
 class Order(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     order_id: str
     buyer_id: str
     shop_id: str
     shop_name: str
     items: List[OrderItem]
     total: float
-    currency: str = \"usd\"
+    currency: str = "usd"
     delivery_type: str
-    status: str = \"pending\"
+    status: str = "pending"
     delivery_address: Optional[Dict[str, str]] = None
     tracking_id: Optional[str] = None
     gift_message: Optional[str] = None
@@ -107,7 +107,7 @@ class Order(BaseModel):
     created_at: datetime
 
 class PaymentTransaction(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     transaction_id: str
     session_id: str
     order_id: Optional[str] = None
@@ -119,7 +119,7 @@ class PaymentTransaction(BaseModel):
     created_at: datetime
 
 class Category(BaseModel):
-    model_config = ConfigDict(extra=\"ignore\")
+    model_config = ConfigDict(extra="ignore")
     category_id: str
     name: str
     description: Optional[str] = None
