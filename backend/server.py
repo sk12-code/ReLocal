@@ -40,6 +40,8 @@ class User(BaseModel):
     picture: Optional[str] = None
     role: str = "tourist"
     addresses: List[Dict[str, str]] = []
+    travel_mode: bool = True  # Default ON for tourists
+    default_delivery_address: Optional[Dict[str, str]] = None
     created_at: datetime
     # password_hash is stored in DB but not returned in API responses
 
