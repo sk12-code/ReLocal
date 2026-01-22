@@ -76,6 +76,9 @@ class Product(BaseModel):
     qr_code_id: str
     verified: bool = False
     authenticity_badge: bool = False
+    estimated_weight_kg: float = 0.5  # Default weight in kg
+    is_fragile: bool = False
+    is_liquid: bool = False
     created_at: datetime
 
 class QRCode(BaseModel):
