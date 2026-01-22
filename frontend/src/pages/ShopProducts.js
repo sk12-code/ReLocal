@@ -107,6 +107,37 @@ export default function ShopProducts() {
     }
   };
 
+  const handleViewQR = async (product) => {
+    setSelectedQRProduct(product);
+    setShowQRDialog(true);
+    setQrLoading(true);
+    setQrCodeUrl(null);
+    
+    try {
+      const response = await axios.get(`${API}/qr/generate/${product.product_id}`, {
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      setQrCodeUrl(url);
+    } catch (error) {
+      console.error('Error fetching QR:', error);
+      toast.error('Failed to load QR code');
+    } finally {
+      setQrLoading(false);
+    }
+  };
+
+  const handleCloseQRDialog = () => {
+    setShowQRDialog(false);
+    setSelectedQRProduct(null);
+    if (qrCodeUrl) {
+      window.URL.revokeObjectURL(qrCodeUrl);
+      setQrCodeUrl(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
