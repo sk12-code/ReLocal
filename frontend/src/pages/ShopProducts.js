@@ -311,21 +311,75 @@ export default function ShopProducts() {
                       </span>
                     )}
                   </div>
-                  <Button
-                    data-testid={`download-qr-${index}`}
-                    onClick={() => handleDownloadQR(product.product_id)}
-                    variant="outline"
-                    className="w-full gap-2 rounded-full"
-                  >
-                    <QrCodeIcon className="w-4 h-4" />
-                    Download QR Code
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      data-testid={`view-qr-${index}`}
+                      onClick={() => handleViewQR(product)}
+                      variant="outline"
+                      className="flex-1 gap-2 rounded-full"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View QR
+                    </Button>
+                    <Button
+                      data-testid={`download-qr-${index}`}
+                      onClick={() => handleDownloadQR(product.product_id)}
+                      variant="outline"
+                      className="flex-1 gap-2 rounded-full"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      {/* QR Code View Modal */}
+      <Dialog open={showQRDialog} onOpenChange={handleCloseQRDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl">QR Code</DialogTitle>
+            <DialogDescription>
+              {selectedQRProduct?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center py-6">
+            {qrLoading ? (
+              <div className="w-64 h-64 bg-muted/20 rounded-lg flex items-center justify-center">
+                <span className="text-muted">Loading QR code...</span>
+              </div>
+            ) : qrCodeUrl ? (
+              <>
+                <img 
+                  src={qrCodeUrl} 
+                  alt={`QR code for ${selectedQRProduct?.name}`}
+                  className="w-64 h-64 rounded-lg shadow-md"
+                  data-testid="qr-code-image"
+                />
+                <p className="text-sm text-muted mt-4 text-center">
+                  Show this code to customers or print it for your shop display
+                </p>
+                <Button
+                  data-testid="modal-download-qr-btn"
+                  onClick={() => handleDownloadQR(selectedQRProduct?.product_id)}
+                  className="mt-4 gap-2 rounded-full"
+                >
+                  <Download className="w-4 h-4" />
+                  Download QR Code
+                </Button>
+              </>
+            ) : (
+              <div className="w-64 h-64 bg-muted/20 rounded-lg flex items-center justify-center">
+                <span className="text-muted">Failed to load QR code</span>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
