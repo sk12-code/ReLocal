@@ -238,6 +238,11 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
+class RegistrationRequest(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: Optional[str] = None
+
 class SessionRequest(BaseModel):
     session_id: str
 
