@@ -1,24 +1,40 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '@/App';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ShoppingCart, MapPin, CheckCircle, ArrowLeft, Plane, Package, AlertTriangle, Droplets } from 'lucide-react';
+import { ShoppingCart, MapPin, CheckCircle, ArrowLeft, Plane, Package, AlertTriangle, Droplets, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 export default function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [product, setProduct] = useState(null);
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     fetchProduct();
+    checkAuth();
   }, [productId]);
+
+  const checkAuth = async () => {
+    try {
+      const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
+      if (response.data && response.data.user_id) {
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
+  };
 
   const fetchProduct = async () => {
     try {
@@ -34,6 +50,12 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+
     const cartItem = {
       product_id: product.product_id,
       product_name: product.name,
@@ -46,6 +68,12 @@ export default function ProductDetail() {
     localStorage.setItem('cart', JSON.stringify([cartItem]));
     toast.success('Added to cart');
     navigate('/checkout');
+  };
+
+  const handleLoginRedirect = () => {
+    // Store the current product URL to return after login
+    localStorage.setItem('returnUrl', location.pathname);
+    navigate('/login');
   };
 
   if (loading) {
