@@ -196,8 +196,12 @@ export default function ProductDetail() {
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full py-6 text-lg font-medium shadow-lg shadow-primary/20"
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                Add to Cart
+                Continue to Checkout
               </Button>
+              
+              <p className="text-center text-sm text-muted mt-3">
+                ✈️ Avoid airline baggage fees — delivered to your door
+              </p>
             </motion.div>
           </div>
         </div>
