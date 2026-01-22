@@ -809,7 +809,7 @@ async def create_checkout_session(checkout_req: CheckoutRequest, request: Reques
         raise HTTPException(status_code=404, detail="Order not found")
     
     host_url = checkout_req.origin_url
-    success_url = f"{host_url}/checkout/success?session_id={{{{CHECKOUT_SESSION_ID}}}}",
+    success_url = f"{host_url}/checkout/success?session_id={{{{CHECKOUT_SESSION_ID}}}}"
     cancel_url = f"{host_url}/checkout"
     
     webhook_url = f"{str(request.base_url)}api/webhook/stripe"
