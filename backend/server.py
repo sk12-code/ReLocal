@@ -406,6 +406,61 @@ async def login(credentials: LoginRequest, response: Response):
 
 # ============= TOURIST ENDPOINTS =============
 
+@api_router.put("/users/travel-mode")
+async def update_travel_mode(travel_update: TravelModeUpdate, request: Request, authorization: Optional[str] = Header(None)):
+    user = await get_current_user(request, authorization)
+    
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"travel_mode": travel_update.travel_mode}}
+    )
+    
+    # Track analytics event
+    event_doc = {
+        "event_type": "travel_mode_toggled",
+        "user_id": user.user_id,
+        "travel_mode": travel_update.travel_mode,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    await db.analytics_events.insert_one(event_doc)
+    
+    return {"message": "Travel mode updated", "travel_mode": travel_update.travel_mode}
+
+@api_router.get("/users/luggage-savings")
+async def get_luggage_savings(request: Request, authorization: Optional[str] = Header(None)):
+    user = await get_current_user(request, authorization)
+    
+    # Calculate total weight saved from delivered orders
+    orders_cursor = db.orders.find({
+        "buyer_id": user.user_id,
+        "delivery_type": "delivery",
+        "is_tourist_delivery": True
+    }, {"_id": 0})
+    orders = await orders_cursor.to_list(1000)
+    
+    total_weight_saved = sum(order.get("total_weight_kg", 0) for order in orders)
+    total_orders = len(orders)
+    fragile_items_saved = 0
+    liquid_items_saved = 0
+    
+    # Count fragile and liquid items
+    for order in orders:
+        for item in order.get("items", []):
+            product = await db.products.find_one({"product_id": item["product_id"]}, {"_id": 0})
+            if product:
+                if product.get("is_fragile"):
+                    fragile_items_saved += item["quantity"]
+                if product.get("is_liquid"):
+                    liquid_items_saved += item["quantity"]
+    
+    return {
+        "total_weight_kg": round(total_weight_saved, 2),
+        "total_orders_delivered": total_orders,
+        "fragile_items_saved": fragile_items_saved,
+        "liquid_items_saved": liquid_items_saved,
+        "estimated_baggage_fee_saved": round(total_weight_saved * 10, 2)  # $10 per kg estimate
+    }
+
 @api_router.get("/products/{product_id}")
 async def get_product(product_id: str):
     product_doc = await db.products.find_one({"product_id": product_id}, {"_id": 0})
