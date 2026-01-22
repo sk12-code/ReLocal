@@ -54,7 +54,10 @@ export default function ShopProducts() {
         name: productForm.name,
         description: productForm.description,
         price: parseFloat(productForm.price),
-        images: productForm.images ? productForm.images.split(',').map(url => url.trim()) : []
+        images: productForm.images ? productForm.images.split(',').map(url => url.trim()) : [],
+        estimated_weight_kg: parseFloat(productForm.estimated_weight_kg),
+        is_fragile: productForm.is_fragile,
+        is_liquid: productForm.is_liquid
       };
 
       await axios.post(`${API}/shops/${shop.shop_id}/products`, productData, {
