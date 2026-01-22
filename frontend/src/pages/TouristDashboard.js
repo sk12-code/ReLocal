@@ -7,6 +7,8 @@ import { Card } from '@/components/ui/card';
 import { QrCode, Package, LogOut, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import TravelModeToggle from '@/components/TravelModeToggle';
+import LuggageSavings from '@/components/LuggageSavings';
 
 export default function TouristDashboard() {
   const navigate = useNavigate();
