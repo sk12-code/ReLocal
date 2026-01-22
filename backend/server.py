@@ -256,6 +256,8 @@ async def process_session(session_req: SessionRequest, response: Response):
             "picture": data["picture"],
             "role": "tourist",
             "addresses": [],
+            "travel_mode": True,  # Default ON for tourists
+            "default_delivery_address": None,
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.users.insert_one(user_doc)
