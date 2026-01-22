@@ -28,6 +28,11 @@ api_router = APIRouter(prefix="/api")
 
 stripe_api_key = os.environ.get('STRIPE_API_KEY')
 
+# Initialize shipping services
+shipping_estimator = ShippingEstimator(db)
+shipment_service = ShipmentService(db)
+tracking_service = TrackingService(db)
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
