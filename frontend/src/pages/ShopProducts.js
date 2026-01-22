@@ -191,6 +191,42 @@ export default function ShopProducts() {
                     placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
                   />
                 </div>
+                <div>
+                  <Label htmlFor="prod-weight">Estimated Weight (kg) *</Label>
+                  <Input
+                    id="prod-weight"
+                    data-testid="product-weight-input"
+                    type="number"
+                    step="0.1"
+                    required
+                    value={productForm.estimated_weight_kg}
+                    onChange={(e) => setProductForm({ ...productForm, estimated_weight_kg: e.target.value })}
+                    placeholder="0.5"
+                  />
+                  <p className="text-xs text-muted mt-1">Helps tourists know how much luggage space they save</p>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="prod-fragile"
+                      checked={productForm.is_fragile}
+                      onChange={(e) => setProductForm({ ...productForm, is_fragile: e.target.checked })}
+                      className="rounded"
+                    />
+                    <Label htmlFor="prod-fragile" className="cursor-pointer">Fragile item</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="prod-liquid"
+                      checked={productForm.is_liquid}
+                      onChange={(e) => setProductForm({ ...productForm, is_liquid: e.target.checked })}
+                      className="rounded"
+                    />
+                    <Label htmlFor="prod-liquid" className="cursor-pointer">Contains liquid</Label>
+                  </div>
+                </div>
                 <Button 
                   data-testid="submit-product-btn"
                   type="submit" 
