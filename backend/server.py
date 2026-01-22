@@ -280,6 +280,16 @@ class OrderCreate(BaseModel):
 class TravelModeUpdate(BaseModel):
     travel_mode: bool
 
+class ShippingEstimateRequest(BaseModel):
+    order_id: str
+    weight_kg: float
+    from_address: Dict[str, str]
+    to_address: Dict[str, str]
+
+class ShipmentCreateRequest(BaseModel):
+    order_id: str
+    customs_declaration: Optional[Dict[str, Any]] = None
+
 class CheckoutRequest(BaseModel):
     order_id: str
     origin_url: str
