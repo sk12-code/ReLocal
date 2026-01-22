@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API } from '@/App';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ShoppingCart, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, MapPin, CheckCircle, ArrowLeft, Plane, Package, AlertTriangle, Droplets } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
