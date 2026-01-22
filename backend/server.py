@@ -138,6 +138,94 @@ class Category(BaseModel):
     description: Optional[str] = None
     created_at: datetime
 
+# ============= SHIPPING & LOGISTICS MODELS =============
+
+class ShippingAddress(BaseModel):
+    name: str
+    street1: str
+    street2: Optional[str] = None
+    city: str
+    state: Optional[str] = None
+    zip_code: str
+    country: str  # ISO 2-letter code
+    phone: Optional[str] = None
+    email: Optional[str] = None
+
+class ShipmentEstimate(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    estimate_id: str
+    order_id: str
+    from_address: ShippingAddress
+    to_address: ShippingAddress
+    weight_kg: float
+    estimated_cost: float
+    currency: str
+    service_level: str  # standard, express, economy
+    delivery_days_min: int
+    delivery_days_max: int
+    is_international: bool
+    is_remote_area: bool
+    estimation_method: str  # api, rule_based
+    created_at: datetime
+
+class Shipment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    shipment_id: str
+    order_id: str
+    courier_provider: str  # shippo_carrier_name
+    tracking_number: Optional[str] = None
+    label_url: Optional[str] = None
+    from_address: ShippingAddress
+    to_address: ShippingAddress
+    weight_kg: float
+    estimated_cost: float
+    final_cost: Optional[float] = None
+    currency: str
+    service_level: str
+    status: str  # pending, label_created, picked_up, in_transit, delivered, failed
+    carrier_tracking_status: Optional[str] = None
+    customs_info: Optional[Dict[str, Any]] = None
+    ship_date: Optional[datetime] = None
+    estimated_delivery: Optional[datetime] = None
+    actual_delivery: Optional[datetime] = None
+    metadata: Dict[str, Any] = {}
+    created_at: datetime
+
+class TrackingEvent(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    event_id: str
+    shipment_id: str
+    status: str
+    status_details: Optional[str] = None
+    location: Optional[str] = None
+    occurred_at: datetime
+    carrier_status_code: Optional[str] = None
+    created_at: datetime
+
+class CourierConfig(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    config_id: str
+    country: str
+    region: Optional[str] = None  # metro, remote, rural
+    preferred_carriers: List[str]
+    backup_carriers: List[str]
+    is_active: bool
+    created_at: datetime
+
+class ShippingRateRule(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    rule_id: str
+    from_country: str
+    to_country: str
+    weight_min_kg: float
+    weight_max_kg: float
+    base_rate: float
+    per_kg_rate: float
+    remote_area_multiplier: float
+    currency: str
+    is_active: bool
+    created_at: datetime
+
 # ============= INPUT MODELS =============
 
 class LoginRequest(BaseModel):
