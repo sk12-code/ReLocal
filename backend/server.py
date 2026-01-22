@@ -597,7 +597,12 @@ async def scan_qr_code(qr_code_id: str, request: Request):
     if not product_doc:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    return {"product_id": qr_doc["product_id"], "redirect_url": f"/products/{qr_doc['product_id']}"}
+    # Get frontend URL from environment or request
+    frontend_url = os.environ.get('REACT_APP_FRONTEND_URL', str(request.base_url).rstrip('/'))
+    
+    # Redirect to product page (works from external QR scanners)
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url=f"{frontend_url}/products/{qr_doc['product_id']}", status_code=303)
 
 @api_router.post("/orders")
 async def create_order(order_data: OrderCreate, request: Request, authorization: Optional[str] = Header(None)):
