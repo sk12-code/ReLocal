@@ -129,6 +129,39 @@ export default function ProductDetail() {
                 ${product.price.toFixed(2)}
               </div>
 
+              {/* Travel Light Benefits */}
+              <Card className="p-4 mb-6 bg-gradient-to-r from-secondary/10 to-accent/10 border-2 border-secondary/30">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0">
+                    <Plane className="w-5 h-5 text-secondary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-base mb-1">Travel Light - We'll Deliver to Your Home</h3>
+                    <p className="text-sm text-muted mb-3">
+                      No need to carry this in your luggage. We'll ship it directly to your door.
+                    </p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <span className="px-2 py-1 bg-background rounded-full flex items-center gap-1">
+                        <Package className="w-3 h-3" />
+                        Weight: {product.estimated_weight_kg || 0.5} kg
+                      </span>
+                      {product.is_fragile && (
+                        <span className="px-2 py-1 bg-background rounded-full flex items-center gap-1 text-orange-600">
+                          <AlertTriangle className="w-3 h-3" />
+                          Fragile
+                        </span>
+                      )}
+                      {product.is_liquid && (
+                        <span className="px-2 py-1 bg-background rounded-full flex items-center gap-1 text-blue-600">
+                          <Droplets className="w-3 h-3" />
+                          Liquid
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
               <Card className="p-6 mb-8">
                 <h3 className="font-semibold text-lg mb-3">Description</h3>
                 <p className="text-muted leading-relaxed">{product.description}</p>
