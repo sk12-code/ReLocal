@@ -91,7 +91,15 @@ export default function TouristDashboard() {
             <h1 className="font-heading text-4xl md:text-5xl font-bold mb-2">
               Welcome back, <span className="text-primary italic">{user?.name?.split(' ')[0]}</span>
             </h1>
-            <p className="text-lg text-muted">Your travel memories await</p>
+            <p className="text-lg text-muted mb-6">Your travel memories await</p>
+            
+            {/* Travel Mode Toggle */}
+            <TravelModeToggle user={user} onUpdate={(travelMode) => setUser({...user, travel_mode: travelMode})} />
+          </div>
+
+          {/* Luggage Savings */}
+          <div className="mb-12">
+            <LuggageSavings />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
