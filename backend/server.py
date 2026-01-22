@@ -320,6 +320,8 @@ async def register(registration: LoginRequest, response: Response):
         "picture": None,
         "role": "tourist",
         "addresses": [],
+        "travel_mode": True,  # Default ON for tourists
+        "default_delivery_address": None,
         "password_hash": password_hash,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
