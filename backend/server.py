@@ -41,6 +41,7 @@ class User(BaseModel):
     role: str = "tourist"
     addresses: List[Dict[str, str]] = []
     created_at: datetime
+    # password_hash is stored in DB but not returned in API responses
 
 class UserSession(BaseModel):
     model_config = ConfigDict(extra="ignore")
