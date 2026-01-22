@@ -91,7 +91,7 @@ export default function Login() {
 
           <form onSubmit={handleEmailAuth} className="space-y-4 mb-6">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
@@ -103,7 +103,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Password *</Label>
               <Input
                 id="password"
                 type="password"
@@ -115,6 +115,19 @@ export default function Login() {
                 minLength={6}
               />
             </div>
+            {!isLogin && (
+              <div>
+                <Label htmlFor="fullName">Full Name <span className="text-muted text-xs">(optional - can be added later)</span></Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  data-testid="fullname-input"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Your full name"
+                />
+              </div>
+            )}
             <Button
               data-testid="email-auth-btn"
               type="submit"
