@@ -281,6 +281,105 @@ async def logout(request: Request, response: Response):
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
 
+@api_router.post("/auth/register")
+async def register(registration: LoginRequest, response: Response):
+    # Check if user already exists
+    existing_user = await db.users.find_one({"email": registration.email}, {"_id": 0})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Hash password
+    password_hash = bcrypt.hashpw(registration.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Create user
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    user_doc = {
+        "user_id": user_id,
+        "email": registration.email,
+        "name": registration.email.split('@')[0].title(),
+        "picture": None,
+        "role": "tourist",
+        "addresses": [],
+        "password_hash": password_hash,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(user_doc)
+    
+    # Create session
+    session_token = f"session_{uuid.uuid4().hex}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=7*24*60*60
+    )
+    
+    # Return user without password_hash
+    user_doc_clean = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
+    if isinstance(user_doc_clean["created_at"], str):
+        user_doc_clean["created_at"] = datetime.fromisoformat(user_doc_clean["created_at"])
+    
+    return User(**user_doc_clean)
+
+@api_router.post("/auth/login")
+async def login(credentials: LoginRequest, response: Response):
+    # Find user
+    user_doc = await db.users.find_one({"email": credentials.email}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Check if user has password_hash (email/password user)
+    if "password_hash" not in user_doc:
+        raise HTTPException(status_code=401, detail="Please use Google login for this account")
+    
+    # Verify password
+    if not bcrypt.checkpw(credentials.password.encode('utf-8'), user_doc["password_hash"].encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Create session
+    session_token = f"session_{uuid.uuid4().hex}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "user_id": user_doc["user_id"],
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=7*24*60*60
+    )
+    
+    # Return user without password_hash
+    user_doc_clean = {k: v for k, v in user_doc.items() if k != "password_hash"}
+    if isinstance(user_doc_clean["created_at"], str):
+        user_doc_clean["created_at"] = datetime.fromisoformat(user_doc_clean["created_at"])
+    
+    return User(**user_doc_clean)
+
 # ============= TOURIST ENDPOINTS =============
 
 @api_router.get("/products/{product_id}")
