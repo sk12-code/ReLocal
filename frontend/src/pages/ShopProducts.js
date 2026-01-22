@@ -21,7 +21,10 @@ export default function ShopProducts() {
     name: '',
     description: '',
     price: '',
-    images: ''
+    images: '',
+    estimated_weight_kg: '0.5',
+    is_fragile: false,
+    is_liquid: false
   });
 
   useEffect(() => {
