@@ -168,6 +168,9 @@ class ProductCreate(BaseModel):
     currency: str = "usd"
     images: List[str] = []
     authenticity_badge: bool = False
+    estimated_weight_kg: float = 0.5
+    is_fragile: bool = False
+    is_liquid: bool = False
 
 class OrderCreate(BaseModel):
     shop_id: str
@@ -176,6 +179,12 @@ class OrderCreate(BaseModel):
     delivery_address: Optional[Dict[str, str]] = None
     gift_message: Optional[str] = None
     scheduled_delivery: Optional[str] = None
+    ship_after_trip: bool = False
+    trip_end_date: Optional[str] = None
+    delivery_preference_reason: Optional[str] = None
+
+class TravelModeUpdate(BaseModel):
+    travel_mode: bool
 
 class CheckoutRequest(BaseModel):
     order_id: str
