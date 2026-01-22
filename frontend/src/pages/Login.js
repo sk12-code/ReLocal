@@ -28,6 +28,10 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+    // If there's a return URL, store it before redirect
+    if (returnUrl) {
+      localStorage.setItem('returnUrl', returnUrl);
+    }
     const redirectUrl = window.location.origin + '/dashboard';
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
@@ -38,13 +42,23 @@ export default function Login() {
 
     try {
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
-      const response = await axios.post(`${API}${endpoint}`, {
-        email,
-        password
-      }, { withCredentials: true });
+      const payload = isLogin 
+        ? { email, password }
+        : { email, password, full_name: fullName || undefined };
+
+      const response = await axios.post(`${API}${endpoint}`, payload, { withCredentials: true });
 
       const user = response.data;
       toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
+
+      // Clear return URL after successful auth
+      localStorage.removeItem('returnUrl');
+
+      // If there's a return URL, go back there (for checkout flow)
+      if (returnUrl) {
+        navigate(returnUrl, { replace: true });
+        return;
+      }
 
       if (user.role === 'admin') {
         navigate('/admin-dashboard', { state: { user }, replace: true });
