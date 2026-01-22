@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,17 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [returnUrl, setReturnUrl] = useState(null);
+
+  useEffect(() => {
+    // Check if there's a return URL stored (from product page checkout)
+    const storedReturnUrl = localStorage.getItem('returnUrl');
+    if (storedReturnUrl) {
+      setReturnUrl(storedReturnUrl);
+    }
+  }, []);
 
   const handleGoogleLogin = () => {
     // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
