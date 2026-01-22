@@ -503,12 +503,28 @@ async def create_order(order_data: OrderCreate, request: Request, authorization:
     if not shop_doc:
         raise HTTPException(status_code=404, detail="Shop not found")
     
+    # Calculate total and weight
     total = sum(item.price * item.quantity for item in order_data.items)
+    total_weight = 0.0
+    
+    # Get product weights
+    for item in order_data.items:
+        product_doc = await db.products.find_one({"product_id": item.product_id}, {"_id": 0})
+        if product_doc:
+            weight = product_doc.get("estimated_weight_kg", 0.5)
+            total_weight += weight * item.quantity
     
     order_id = f"order_{uuid.uuid4().hex[:12]}"
     scheduled_delivery = None
     if order_data.scheduled_delivery:
         scheduled_delivery = datetime.fromisoformat(order_data.scheduled_delivery)
+    
+    trip_end_date = None
+    if order_data.trip_end_date:
+        trip_end_date = datetime.fromisoformat(order_data.trip_end_date)
+    
+    # Determine if this is a tourist delivery
+    is_tourist_delivery = order_data.delivery_type == "delivery" and user.role == "tourist"
     
     order_doc = {
         "order_id": order_id,
@@ -524,14 +540,34 @@ async def create_order(order_data: OrderCreate, request: Request, authorization:
         "tracking_id": None,
         "gift_message": order_data.gift_message,
         "scheduled_delivery": scheduled_delivery.isoformat() if scheduled_delivery else None,
+        "ship_after_trip": order_data.ship_after_trip,
+        "trip_end_date": trip_end_date.isoformat() if trip_end_date else None,
+        "total_weight_kg": total_weight,
+        "delivery_preference_reason": order_data.delivery_preference_reason,
+        "is_tourist_delivery": is_tourist_delivery,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.orders.insert_one(order_doc)
+    
+    # Track analytics event
+    if order_data.delivery_type == "delivery":
+        event_doc = {
+            "event_type": "delivery_selected",
+            "user_id": user.user_id,
+            "order_id": order_id,
+            "ship_after_trip": order_data.ship_after_trip,
+            "weight_saved_kg": total_weight,
+            "reason": order_data.delivery_preference_reason,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        await db.analytics_events.insert_one(event_doc)
     
     if isinstance(order_doc["created_at"], str):
         order_doc["created_at"] = datetime.fromisoformat(order_doc["created_at"])
     if order_doc.get("scheduled_delivery") and isinstance(order_doc["scheduled_delivery"], str):
         order_doc["scheduled_delivery"] = datetime.fromisoformat(order_doc["scheduled_delivery"])
+    if order_doc.get("trip_end_date") and isinstance(order_doc["trip_end_date"], str):
+        order_doc["trip_end_date"] = datetime.fromisoformat(order_doc["trip_end_date"])
     
     return Order(**order_doc)
 
