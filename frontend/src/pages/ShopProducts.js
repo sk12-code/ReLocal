@@ -7,8 +7,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowLeft, Plus, QrCode as QrCodeIcon } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { ArrowLeft, Plus, QrCode as QrCodeIcon, Eye, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ShopProducts() {
@@ -17,6 +17,10 @@ export default function ShopProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showQRDialog, setShowQRDialog] = useState(false);
+  const [selectedQRProduct, setSelectedQRProduct] = useState(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
+  const [qrLoading, setQrLoading] = useState(false);
   const [productForm, setProductForm] = useState({
     name: '',
     description: '',
